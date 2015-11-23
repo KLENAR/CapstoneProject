@@ -1,0 +1,25 @@
+---
+title: "CAPSTONE. Exploratory Analisis. Data Busuness."
+output: html_document
+---
+
+
+Let's make dataset from business dataset.
+Unite columns:
+"business_id"       "open"          
+  "name"                "stars"       
+
+
+```{r}
+load("C:/Downloads/LearningR/CapstoneProjectR/business.RData")
+myvar<-c("business_id","open","name","stars")
+business_id<-business[myvar]
+head(business_id, n=1)
+```
+
+Save our short dataset
+
+```{r}
+save (business_id,file="C:/Downloads/LearningR/CapstoneProjectR/business_id.RData")
+
+```

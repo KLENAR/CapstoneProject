@@ -1,0 +1,112 @@
+---
+title: "CAPSTONE.  Analisis. Create and Clean Corpus. Ngram Tokenization."
+output: html_document
+---
+Using the tm package, the sampled data is used to create a corpus. Subsequently, the the following transformations are performed:
+
+- convert to lowercase
+- characters /, @ |
+- common punctuation
+- numbers
+- English stop words (not perfoms)
+- strip whitespace
+- stemming (Porter’s stemming)
+
+
+Read  training dataset
+
+```{r}
+
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_training.RData")
+
+```
+
+Create Corpus
+
+```{r}
+library(tm)
+tip_text<-as.data.frame(tip_training$text)
+docs <- Corpus(DataframeSource(tip_text))
+
+```
+
+
+```{r}
+tmbiWdFq<- function(docs) 
+
+{
+#convert to lowercase
+docs <- tm_map(docs, content_transformer(tolower))
+
+#remove more transforms
+toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+docs <- tm_map(docs, toSpace, "/|@|\\|")
+
+#remove punctuation
+docs <- tm_map(docs, removePunctuation)
+
+#remove numbers
+docs <- tm_map(docs, removeNumbers)
+
+#strip whitespace
+ docs <- tm_map(docs, stripWhitespace)
+
+#remove english stop words
+docs <- tm_map(docs, removeWords, stopwords("english"))
+
+#initiate stemming
+library(SnowballC)
+docs <- tm_map(docs, stemDocument)
+
+#Ngram Tokenization
+
+#N-grams models are created to explore word frequencies. Using the RWeka package, #unigrams, bigrams  are created.
+
+library(RWeka)
+Tokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+bidtm <- DocumentTermMatrix(docs, control = list(tokenize = Tokenizer))
+
+#Top Frequencies
+#Below, you can see the top  unigrams with the highest frequencies.
+
+tm_bifreq <- sort(colSums(as.matrix(bidtm)), decreasing=TRUE)
+
+return(tm_bifreq)
+}
+tm_bifreq<-tmbiWdFq(docs)
+
+tm_biwordfreq <- data.frame(word=names(tm_bifreq), freq=tm_bifreq)
+
+```
+
+Explore Frequencies
+
+In the diagrams below, you can explore the Ngrams by frequencies:
+
+
+```{r}
+
+library(ggplot2)
+library(dplyr)
+tm_biwordfreq %>% 
+    filter(freq > 500) %>%
+    ggplot(aes(word,freq)) +
+    geom_bar(stat="identity") +
+    ggtitle("Bigrams with frequencies > 500") +
+    xlab("Bigrams") + ylab("Frequency") +
+    theme(axis.text.x=element_text(angle=45, hjust=1))
+```
+
+
+Wordcloud - Top 50 Bigrams
+
+Below, we can see wordclouds of the top 50  bigrams.
+
+```{r}
+library(wordcloud)
+set.seed(39)
+wordcloud(names(tm_bifreq), tm_bifreq, max.words=50, scale=c(5, .1), colors=brewer.pal(6, "Dark2"))
+```
+
+
+

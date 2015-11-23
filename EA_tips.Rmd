@@ -1,0 +1,17 @@
+---
+title: "CAPSTONE. Exploratory Analisis. Busuness."
+output: html_document
+---
+
+Let's see on head of business dataset, summary and table of likes
+
+```{r}
+load("C:/Downloads/LearningR/CapstoneProjectR/tip.RData")
+names(tip)
+head(tip, n=1)
+summary(tip)
+table(tip$likes)
+```
+
+
+

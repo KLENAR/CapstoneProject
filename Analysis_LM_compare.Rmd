@@ -1,0 +1,109 @@
+---
+title: "CAPSTONE.  Analisis and compare of LM ."
+output: html_document
+---
+
+```{r}
+mse <- function(sm) { 
+    mse <- mean(sm$residuals^2)
+    return(mse)
+}
+```
+
+
+Read  training dataset with freq
+
+```{r}
+
+load("tip_training_un_freq.RData")
+```
+
+
+LM
+
+
+```{r}
+tip_training_lm<-tip_training[,6:106]
+fit1<-lm(stars^3 ~ ., data=tip_training_lm)
+
+summary.lm(fit1)
+
+
+```
+
+MSE
+
+```{r}
+print(mse(fit1))
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+plot(fit1)
+
+
+```
+
+```{r}
+plot(tip_training_lm$stars^3, fitted.values(fit1))
+```
+
+
+```{r}
+library(car)
+
+```
+
+
+```{r}
+durbinWatsonTest(fit1)
+
+```
+
+
+```{r}
+ncvTest(fit1)
+
+```
+
+
+```{r}
+spreadLevelPlot(fit1)
+
+```
+
+
+```{r}
+library(gvlma)
+summary(gvlma(fit1))
+
+```
+
+
+```{r}
+outlierTest(fit1)
+
+```
+
+```{r}
+load("tip_testing_un_freq.RData")
+tip_testing<-tip_training
+```
+
+MSE test
+
+```{r}
+pred1<-predict(fit1,tip_testing[,7:106])
+
+```
+
+```{r}
+print(  mean((tip_testing$stars^3- pred1 )^2))
+```
+
+
+```{r}
+plot(tip_testing$stars^3, pred1)
+```
+

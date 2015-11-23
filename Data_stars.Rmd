@@ -1,0 +1,28 @@
+---
+title: "CAPSTONE. Exploratory Analisis. Data Stars."
+output: html_document
+---
+
+
+Let's make  dataset from  tips and business stars.
+   
+
+
+```{r}
+
+load("C:/Downloads/LearningR/CapstoneProjectR/business_id_tip.RData")
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_id.RData")
+temp_Business_star<-business_id_tip[,c("business_id","stars")]
+tip_id_stars<-merge(tip_id,temp_Business_star, by= "business_id") 
+rm(temp_Business_star)
+head(tip_id_stars)
+nrow(tip_id_stars)
+
+```
+
+Save our short dataset
+
+```{r}
+save (tip_id_stars,file="C:/Downloads/LearningR/CapstoneProjectR/tip_id_stars.RData")
+
+```

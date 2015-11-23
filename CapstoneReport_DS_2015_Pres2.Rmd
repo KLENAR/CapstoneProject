@@ -1,0 +1,58 @@
+Capstone Report for Data Science Specialization 
+========================================================
+
+author: *R. E.*
+date: *22 November 2015*
+
+Introduction
+========================================================
+
+This capstone report for the Coursera Data Science Specialization from Johns Hopkins University will answer the question:  what kinds of tip features correlate most with  business ratings. 
+
+Dataset
+========================================================
+he darasets 'tips' and 'business' were united on  datasets with  the fields:
+
+'business_id',
+'user_id', 
+'text', 
+'likes', 
+'date', 
+'stars'.
+
+
+The Model
+========================================================
+
+The first model I will look at is just a linear regressiom.
+Algorithm  Random Forests   with cross validation gave the most accurate results in the training dataset. 
+
+With the top 100 (50) popular words (bigrams) ,  101 (51)  index feature vectors were created  for each business.  The feature vector includes the number of occurrences of each popular word in the tips for that business, followed by an offset term. 
+
+
+Results
+========================================================
+
+The importance of the words ii tips  was estimated by means of Random Forest model tuning by cross validation. Top-10 unigrams from tips are:
+
+great,
+servic,
+love,
+best,
+awesom,
+bad,
+tri,
+amaz,
+food,
+friend,
+dont,
+chicken,
+delici,
+staff,
+locat,
+peopl,
+yum,
+excel
+
+
+

@@ -1,0 +1,33 @@
+---
+title: "CAPSTONE.  Analisis. Perform Sampling."
+output: html_document
+---
+
+Given the large amount of text and limited computational resources, sampling is performed. 10000 lines per file  tip_id_stars are randomly sampled and saved to disk. Its subdevided on 70/30 training and test subsets
+
+
+```{r}
+n_sample<-10000
+n_test<-3000
+n_training<- n_sample-n_test
+
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_id_stars.RData")
+set.seed(47)
+sample_tip<-tip_id_stars[sample(1:nrow(tip_id_stars),n_sample),]
+index_test<-sample(1:nrow(sample_tip),n_test)
+tip_test<-sample_tip[index_test,]
+tip_training<-sample_tip[-index_test,]
+
+rm(sample_tip)
+
+nrow(tip_test)
+nrow(tip_training)
+
+```
+
+Save our test and training  datasets
+
+```{r}
+save (tip_test,file="C:/Downloads/LearningR/CapstoneProjectR/tip_test.RData")
+save (tip_training,file="C:/Downloads/LearningR/CapstoneProjectR/tip_training.RData")
+```

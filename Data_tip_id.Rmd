@@ -1,0 +1,27 @@
+---
+title: "CAPSTONE. Exploratory Analisis. Data tip."
+output: html_document
+---
+
+
+Let's make dataset from tip dataset.
+Unite columns:
+"user_id" "text" "business_id"      "likes" "date" 
+(all without "type")    
+
+
+```{r}
+load("C:/Downloads/LearningR/CapstoneProjectR/tip.RData")
+myvar<-c("user_id", "text", "business_id","likes", "date")
+tip_id<-tip[myvar]
+head(tip_id, n=1)
+```
+
+
+
+Save our short dataset
+
+```{r}
+save (tip_id,file="C:/Downloads/LearningR/CapstoneProjectR/tip_id.RData")
+
+```

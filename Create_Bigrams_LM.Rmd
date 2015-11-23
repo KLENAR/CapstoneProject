@@ -1,0 +1,189 @@
+---
+title: "CAPSTONE.  Analisis. Create dataset for training and testing frequances for LM ."
+output: html_document
+---
+
+
+```{r}
+tmbiWdFq<- function(docs) 
+
+{
+  library(tm)
+#convert to lowercase
+docs <- tm_map(docs, content_transformer(tolower))
+
+#remove more transforms
+toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+docs <- tm_map(docs, toSpace, "/|@|\\|")
+
+#remove punctuation
+docs <- tm_map(docs, removePunctuation)
+
+#remove numbers
+docs <- tm_map(docs, removeNumbers)
+
+#strip whitespace
+ docs <- tm_map(docs, stripWhitespace)
+
+#remove english stop words
+docs <- tm_map(docs, removeWords, stopwords("english"))
+
+#initiate stemming
+library(SnowballC)
+docs <- tm_map(docs, stemDocument)
+
+#Ngram Tokenization
+
+#N-grams models are created to explore word frequencies. Using the RWeka package, #bigrams, bigrams  are created.
+
+library(RWeka)
+Tokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+bidtm <- DocumentTermMatrix(docs, control = list(tokenize = Tokenizer))
+
+#Top Frequencies
+#Below, you can see the top  bigrams with the highest frequencies.
+
+tm_bifreq <- sort(colSums(as.matrix(bidtm)), decreasing=TRUE)
+
+return(tm_bifreq)
+}
+
+```
+
+
+
+
+
+Read  training dataset
+
+```{r}
+tm_bifreq <- read.table(file="tm_bifreq", sep = " ", row.names = NULL)
+load("tm_biwordfreq.RData")
+tm_biwordfreq<-data.frame(tm_biwordfreq,row.names = NULL)
+```
+
+
+```{r}
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_training.RData")
+tip_training<-tip_training[,1:6]
+```
+
+Create Corpus for each tip
+
+
+```{r}
+library(tm)
+nWords<-min(nrow(tm_biwordfreq),50)
+
+
+
+```
+
+```{r}
+
+nrtip<-nrow(tip_training)
+for (i in 1:nrtip) 
+{
+tip_text<-as.data.frame(tip_training[i,"text"])
+
+docs <- Corpus(DataframeSource(tip_text))
+
+
+tm_bifreq_i<-tmbiWdFq(docs)
+if (is.null(length(tm_bifreq_i))) next
+tm_biwordfreq_i <- data.frame(word=names(tm_bifreq_i), freq=tm_bifreq_i, row.names = NULL, stringsAsFactors = FALSE)
+
+if (is.null(nrow(tm_biwordfreq_i))) next
+nuf_i<-nrow(tm_biwordfreq_i)
+
+for (j in 1:nWords) 
+{
+  
+  xi<-0
+  word_j<-tm_biwordfreq[j,"word"]
+ 
+ 
+  for (k in 1:nuf_i)
+  {
+    if (is.null(tm_biwordfreq_i[k,"word"])) {next}
+   if (word_j == tm_biwordfreq_i[k,"word"]) 
+  {
+    xi<-tm_biwordfreq_i[k,"freq"]
+   
+    }
+  }
+
+tip_training[i,word_j] <-xi
+
+}
+
+}
+head(tip_training,2)
+save(tip_training, file="tip_training_bi_freq.RData")
+```
+
+For testing data set:
+
+
+
+```{r}
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_test.RData")
+tip_training<-tip_test[,1:6]
+```
+
+Create Corpus for each tip
+
+
+```{r}
+library(tm)
+nWords<-min(nrow(tm_biwordfreq),50)
+
+
+
+```
+
+```{r}
+
+nrtip<-nrow(tip_training)
+for (i in 1:nrtip) 
+{
+tip_text<-as.data.frame(tip_training[i,"text"])
+
+docs <- Corpus(DataframeSource(tip_text))
+
+
+tm_bifreq_i<-tmbiWdFq(docs)
+if (is.null(length(tm_bifreq_i))) next
+tm_biwordfreq_i <- data.frame(word=names(tm_bifreq_i), freq=tm_bifreq_i, row.names = NULL, stringsAsFactors = FALSE)
+
+if (is.null(nrow(tm_biwordfreq_i))) next
+nuf_i<-nrow(tm_biwordfreq_i)
+
+for (j in 1:nWords) 
+{
+  
+  xi<-0
+  word_j<-tm_biwordfreq[j,"word"]
+ 
+ 
+  for (k in 1:nuf_i)
+  {
+    if (is.null(tm_biwordfreq_i[k,"word"])) {next}
+   if (word_j == tm_biwordfreq_i[k,"word"]) 
+  {
+    xi<-tm_biwordfreq_i[k,"freq"]
+   
+    }
+  }
+  
+tip_training[i,word_j] <-xi
+
+}
+
+}
+head(tip_training,2)
+save(tip_training, file="tip_testing_bi_freq.RData")
+```
+
+
+

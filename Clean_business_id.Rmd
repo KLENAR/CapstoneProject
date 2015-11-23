@@ -1,0 +1,28 @@
+---
+title: "CAPSTONE. Exploratory Analisis. Data Business."
+output: html_document
+---
+
+
+Let's make  business dataset only there are tips for.
+   
+
+
+```{r}
+
+load("C:/Downloads/LearningR/CapstoneProjectR/business_id.RData")
+load("C:/Downloads/LearningR/CapstoneProjectR/tip_id.RData")
+
+business_index_tip <- which(business_id$business_id %in% tip_id$business_id)
+business_id_tip <- business_id[business_index_tip,]
+head(business_id_tip, n=1)
+nrow(business_id)
+nrow(business_id_tip)
+```
+
+Save our short dataset
+
+```{r}
+save (business_id_tip,file="C:/Downloads/LearningR/CapstoneProjectR/business_id_tip.RData")
+
+```

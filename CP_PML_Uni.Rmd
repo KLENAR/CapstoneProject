@@ -1,0 +1,120 @@
+
+
+
+```{r}
+# needed libraries
+library(caret)
+library(parallel)
+library(doParallel)
+```
+
+### Loading data
+
+Let us download and load the datasets.
+Needed files are at the working directiry.
+## Creating Training and Testing Subsets
+
+```{r}
+ load("tip_training_un_freq.RData")
+training <-tip_training[ ,6:106]
+
+load("tip_testing_un_freq.RData")
+testing  <-tip_training[ ,6:106] 
+```
+
+
+
+
+
+
+
+
+
+
+## Training
+Let we use two  methods for building  prediction models: random forest and  linear discriminant analysis models cause these methods are two of the most powerful and popular models for building prediction algorithm.
+
+Then we compare the results obtained from both methods to get a sense of the predictions robustness.
+
+
+```{r}
+library(gbm)
+library(e1071)
+library(randomForest)
+
+#random seed
+#set.seed(1968)
+#parallel computing for multi-core
+#registerDoParallel(makeCluster(detectCores()))
+#two models are generated:  linear discriminant analysis ('lda')  and  random forest   ("rf") 
+#rfModel <- randomForest(stars ~ ., data = training)
+#save(rfModel, file="rfModel_un_freq.RData")
+#ldaModel <-train(stars ~ ., data = training,  method = 'lda')
+#save(ldaModel, file="ldaModel_un_freq.RData")
+load("rfModel_un_freq.RData")
+
+```
+
+
+##Accuracy
+
+We use confusion matrix to find the accuracy of our  random forest model.
+
+```{r}
+print("Random Forest Accuracy ")
+print(mean(testing$stars-predict(rfModel,testing))^2)
+#print("Linear Discriminant Analysis")
+#print(confusionMatrix( testing$stars, predict(ldaModel , testing)))
+
+```
+
+
+
+
+##  Cross validation
+The cross validation technique is employed  to improve the  random forest model and  to avoid over-fitting
+
+```{r}
+#random seed
+#set.seed(1971)
+#parallel computing for multi-core
+#registerDoParallel(makeCluster(detectCores()))  
+#controlf <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
+
+#rfModel_CV <- train(stars ~ ., method="rf",  data=training, trControl = controlf)
+#save(rfModel_CV, file="rfModel_CV_un_freq.RData")
+```
+
+The final accuracy of the  random forest model with cross validation is:
+
+```{r}
+print("Random forest accuracy after CV")
+#rfModel_CV_accuracy <- predict(rfModel_CV , testing)
+rfModel_CV_accuracy <- predict(rfModel , testing)
+#print(confusionMatrix(rfModel_CV_accuracy, testing$stars))
+print(mean(testing$stars-rfModel_CV_accuracy)^2)
+
+```
+
+We saw the accuracy is  slightly better than the baseline accuracy.
+
+
+## Variables importance
+We can estimate the importance of the variables in random forest model tuning by cross validation.
+
+
+```{r}
+#print("Variables importance in model")
+#vImp = varImp(rfModel_CV$finalModel)
+#vImp = varImp(rfModel)
+#vImp$var<-rownames(vImp)
+#vImp = as.data.frame(vImp[with(vImp, order(vImp$Overall, decreasing=TRUE)), ])
+#rownames(vImp) <- NULL
+#print(vImp)
+
+```
+
+
+
+
+
